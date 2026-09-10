@@ -19,6 +19,7 @@ import cors from 'cors';
  */
 import config from '@/config';
 import corsOptions from '@/lib/cors';
+import { logger, logtail } from '@/lib/winston';
 
 /**
  * Routes
@@ -82,11 +83,11 @@ server.use(compression());
 
     // Start the server and listen on the specified port
     server.listen(config.PORT, () => {
-      console.log(`Server is running on port ${config.PORT}`);
+      logger.info(`Server is running on port ${config.PORT}`);
     });
   } catch (error) {
     // Log a critical error if the server fails to start
-    console.error('Failed to start server:', error);
+    logger.error('Failed to start server:', error);
 
     if (config.NODE_ENV === 'production') {
       // In production, exit the process with a failure code
@@ -98,10 +99,16 @@ server.use(compression());
 // Handless graceful server shutdown on termination signals (e.g., SIGINT, SIGTERM)
 const serverTermination = async (signal: NodeJS.Signals): Promise<void> => {
   try {
-    console.log('Server shutdown', signal);
+    // Log a warning indicating the server is shutting down
+    logger.info('Server shutdown', signal);
+
+    // Flush any remaining logs to Logtail before exiting
+    logtail.flush();
+
+    // Exit the process with a success code
     process.exit(0);
   } catch (error) {
-    console.error('Error during server shutdown:', error);
+    logger.error('Error during server shutdown:', error);
     process.exit(1);
   }
 };
