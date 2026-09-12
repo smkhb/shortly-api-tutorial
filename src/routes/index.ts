@@ -4,6 +4,11 @@
 import { Router } from 'express';
 
 /**
+ * Routes
+ */
+import authRoute from '@/routes/auth';
+
+/**
  * Initial express router
  * @description This section initializes the Express router, which is used to define the application's route handlers and endpoints.
  */
@@ -18,5 +23,8 @@ router.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Auth routes
+router.use('/auth', authRoute);
 
 export default router;
