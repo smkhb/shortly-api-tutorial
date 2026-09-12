@@ -6,6 +6,11 @@ import { body } from 'express-validator';
 import bcrypt from 'bcryptjs';
 
 /**
+ * Custom modules
+ */
+import expressRateLimit from '@/lib/expressRateLimit';
+
+/**
  * Controllers
  */
 import register from '@/controllers/auth/register';
@@ -26,6 +31,7 @@ const router = Router();
  */
 router.post(
   `/register`,
+  expressRateLimit('auth'),
   body('name').trim().notEmpty().withMessage('Name is required'),
   body('email')
     .trim()
