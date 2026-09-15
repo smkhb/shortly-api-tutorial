@@ -3,7 +3,7 @@
  */
 import { Router } from 'express';
 import { body } from 'express-validator';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 /**
  * Custom modules

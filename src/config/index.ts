@@ -16,6 +16,7 @@ const config = {
   PORT: process.env.PORT!,
   CORS_WHITELIST,
   WINDOW_MS: _1H_IN_MS,
+  MONGO_CONNECTION_URI: process.env.MONGO_CONNECTION_URI!,
 };
 
 export default config;

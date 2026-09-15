@@ -20,6 +20,7 @@ import cors from 'cors';
 import config from '@/config';
 import corsOptions from '@/lib/cors';
 import { logger, logtail } from '@/lib/winston';
+import { connectDB, disconnectDB } from '@/lib/mongoose';
 
 /**
  * Routes
@@ -78,6 +79,9 @@ server.use(compression());
 // Imediately Invoked Function Expression (IIFE) to start the server
 (async function (): Promise<void> {
   try {
+    // Connect to the MongoDB database
+    await connectDB();
+
     // Register application routes under the root path
     server.use('/', router);
 
@@ -99,6 +103,9 @@ server.use(compression());
 // Handless graceful server shutdown on termination signals (e.g., SIGINT, SIGTERM)
 const serverTermination = async (signal: NodeJS.Signals): Promise<void> => {
   try {
+    // Disconnect from the MongoDB database
+    await disconnectDB();
+
     // Log a warning indicating the server is shutting down
     logger.info('Server shutdown', signal);
 
