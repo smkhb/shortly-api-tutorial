@@ -8,6 +8,7 @@ dotenv.config();
  */
 const CORS_WHITELIST = ['https://shortly.codewithsadee.com'];
 const _1H_IN_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+const _7D_IN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
 const config = {
   LOGTAIL_INGESTING_HOST: process.env.LOGTAIL_INGESTING_HOST!,
@@ -16,7 +17,11 @@ const config = {
   PORT: process.env.PORT!,
   CORS_WHITELIST,
   WINDOW_MS: _1H_IN_MS,
+  COOKIE_MAX_AGE: _7D_IN_MS,
   MONGO_CONNECTION_URI: process.env.MONGO_CONNECTION_URI!,
+  WHITELISTED_EMAILS: process.env.WHITELISTED_EMAILS?.split(','),
+  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET!,
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET!,
 };
 
 export default config;
