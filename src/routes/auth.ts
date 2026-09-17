@@ -14,11 +14,17 @@ import expressRateLimit from '@/lib/expressRateLimit';
  * Controllers
  */
 import register from '@/controllers/auth/register';
+import login from '@/controllers/auth/login';
 
 /**
  * Middlewares
  */
 import validationError from '@/middlewares/validationError';
+
+/**
+ * Models
+ */
+import User from '@/models/user';
 
 /**
  * Initial express router
@@ -39,8 +45,14 @@ router.post(
     .withMessage('Email is required')
     .isEmail()
     .withMessage('Invalid email address')
-    .custom(async () => {
-      // Todo this process after configuring 'User'model
+    .custom(async (value) => {
+      // Check if the email already exists in the database
+      const userExists = await User.exists({ email: value }).exec();
+
+      // Handle case when duplacte email is found
+      if (userExists) {
+        throw new Error('Email already in use');
+      }
     }),
   body('password')
     .trim()
@@ -55,6 +67,52 @@ router.post(
     .withMessage('Role not allowed'),
   validationError,
   register,
+);
+
+/**
+ * Post route to login user
+ */
+router.post(
+  `/login`,
+  expressRateLimit('auth'),
+  body('email')
+    .trim()
+    .notEmpty()
+    .withMessage('Email is required')
+    .isEmail()
+    .withMessage('Invalid email address')
+    .custom(async (value) => {
+      // Check if the email already exists in the database
+      const userExists = await User.exists({ email: value }).exec();
+
+      // Handle case when email is not found in the database
+      if (!userExists) {
+        throw new Error('Email not found');
+      }
+    }),
+  body('password')
+    .trim()
+    .notEmpty()
+    .withMessage('Password is required')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long')
+    .custom(async (password, { req }) => {
+      const { email } = req.body;
+      const user = await User.findOne({ email })
+        .select('password')
+        .lean()
+        .exec();
+
+      if (!user) return;
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
+        throw new Error('Invalid password');
+      }
+    }),
+  validationError,
+  login,
 );
 
 export default router;
