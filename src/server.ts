@@ -87,7 +87,7 @@ server.use(compression());
 
     // Start the server and listen on the specified port
     server.listen(config.PORT, () => {
-      logger.info(`Server is running on port ${config.PORT}`);
+      logger.info(`Server is running on http://localhost:${config.PORT}`);
     });
   } catch (error) {
     // Log a critical error if the server fails to start

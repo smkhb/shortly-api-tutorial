@@ -87,9 +87,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
       accessToken,
     });
 
-    logger.info(
-      `User with email ${email} and name ${name} has been registered successfully`,
-    );
+    logger.info(`User with email ${email} has been registered successfully`);
   } catch (error) {
     res.status(500).json({
       code: 'INTERNAL_SERVER_ERROR',
