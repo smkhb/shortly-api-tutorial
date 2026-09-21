@@ -16,6 +16,7 @@ import expressRateLimit from '@/lib/expressRateLimit';
 import register from '@/controllers/auth/register';
 import login from '@/controllers/auth/login';
 import logout from '@/controllers/auth/logout';
+import refreshToken from '@/controllers/auth/refreshToken';
 
 /**
  * Middlewares
@@ -117,6 +118,14 @@ router.post(
   login,
 );
 
+/**
+ * Delete route to logout user
+ */
 router.delete(`/logout`, expressRateLimit('basic'), authentication, logout);
+
+/**
+ * Get route to refresh user's access token
+ */
+router.get(`/refresh-token`, expressRateLimit('basic'), refreshToken);
 
 export default router;
