@@ -15,11 +15,13 @@ import expressRateLimit from '@/lib/expressRateLimit';
  */
 import register from '@/controllers/auth/register';
 import login from '@/controllers/auth/login';
+import logout from '@/controllers/auth/logout';
 
 /**
  * Middlewares
  */
 import validationError from '@/middlewares/validationError';
+import authentication from '@/middlewares/authentication';
 
 /**
  * Models
@@ -114,5 +116,7 @@ router.post(
   validationError,
   login,
 );
+
+router.delete(`/logout`, expressRateLimit('basic'), authentication, logout);
 
 export default router;

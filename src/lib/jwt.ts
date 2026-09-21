@@ -39,4 +39,23 @@ const generateRefreshToken = (payload: TokenPayload): string => {
   return token;
 };
 
-export { generateAccessToken, generateRefreshToken };
+/**
+ * Verify accessToken
+ */
+const verifyAccessToken = (token: string): string | JwtPayload => {
+  return jwt.verify(token, config.JWT_ACCESS_SECRET);
+};
+
+/**
+ * Verify refreshToken
+ */
+const verifyRefreshToken = (token: string): string | JwtPayload => {
+  return jwt.verify(token, config.JWT_REFRESH_SECRET);
+};
+
+export {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyAccessToken,
+  verifyRefreshToken,
+};
