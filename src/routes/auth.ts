@@ -17,6 +17,7 @@ import register from '@/controllers/auth/register';
 import login from '@/controllers/auth/login';
 import logout from '@/controllers/auth/logout';
 import refreshToken from '@/controllers/auth/refreshToken';
+import forgotPassword from '@/controllers/auth/forgotPassword';
 
 /**
  * Middlewares
@@ -127,5 +128,30 @@ router.delete(`/logout`, expressRateLimit('basic'), authentication, logout);
  * Get route to refresh user's access token
  */
 router.get(`/refresh-token`, expressRateLimit('basic'), refreshToken);
+
+/**
+ * Post a route to send reset password link to user's email
+ */
+router.post(
+  `/forgot-password`,
+  expressRateLimit('auth'),
+  body('email')
+    .trim()
+    .notEmpty()
+    .withMessage('Email is required')
+    .isEmail()
+    .withMessage('Invalid email address')
+    .custom(async (email) => {
+      // Check if the email already exists in the database
+      const userExists = await User.exists({ email }).exec();
+
+      // Handle case when email is not found in the database
+      if (!userExists) {
+        throw new Error('Email not found');
+      }
+    }),
+  validationError,
+  forgotPassword,
+);
 
 export default router;

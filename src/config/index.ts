@@ -22,6 +22,7 @@ const config = {
   WHITELISTED_EMAILS: process.env.WHITELISTED_EMAILS?.split(','),
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET!,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET!,
+  JWT_PASSWORD_RESET_SECRET: process.env.JWT_PASSWORD_RESET_SECRET!,
 };
 
 export default config;
