@@ -2,7 +2,10 @@
  * Custom modules
  */
 import { generatePasswordResetToken } from '@/lib/jwt';
+import { resetLinkTemplate } from '@/mails/resetLink';
 import { logger } from '@/lib/winston';
+import config from '@/config';
+import nodemailerTransporter from '@/lib/nodemailer';
 
 /**
  * Models
@@ -21,18 +24,30 @@ const forgotPassword = async (req: Request, res: Response) => {
   const { email }: RequestBody = req.body;
 
   try {
-    // Find the user by email
+    // Generate a password reset token for the provided email
     const passwordResetToken = generatePasswordResetToken({ email });
 
-    // Find the user by email and update the passwordResetToken field
-    const user = await User.findOne({ email })
-      .select('name passwowrdResetToken')
-      .exec();
+    // Find the user by email and select the name and passwordResetToken fields
+    const user = await User.findOne({ email }).select('name').exec();
 
     // If the user is not found, return a 404 status code
     if (!user) return;
 
+    // Verify the nodemailer transporter to ensure it's ready to send emails
+    await nodemailerTransporter.verify();
+
     // Send the reset token to user email
+    await nodemailerTransporter.sendMail({
+      from: `"Shortly" <test@andreiabernardo.com.br>`,
+      to: email,
+      subject: 'Password Reset Request',
+      html: resetLinkTemplate({
+        name: user.name,
+        resetLink: `${config.CLIENT_ORIGIN}/reset-password?token=${passwordResetToken}`,
+      }),
+    });
+
+    console.log(`Password reset email sent to ${email}`);
 
     // Store the reset token in user data and save
     user.passwordResetToken = passwordResetToken;
