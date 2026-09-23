@@ -47,8 +47,6 @@ const forgotPassword = async (req: Request, res: Response) => {
       }),
     });
 
-    console.log(`Password reset email sent to ${email}`);
-
     // Store the reset token in user data and save
     user.passwordResetToken = passwordResetToken;
     await user.save();

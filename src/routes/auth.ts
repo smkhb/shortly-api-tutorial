@@ -18,6 +18,7 @@ import login from '@/controllers/auth/login';
 import logout from '@/controllers/auth/logout';
 import refreshToken from '@/controllers/auth/refreshToken';
 import forgotPassword from '@/controllers/auth/forgotPassword';
+import resetPassword from '@/controllers/auth/resetPassword';
 
 /**
  * Middlewares
@@ -152,6 +153,22 @@ router.post(
     }),
   validationError,
   forgotPassword,
+);
+
+/**
+ * Post a route to reset password
+ */
+router.post(
+  `/reset-password`,
+  expressRateLimit('auth'),
+  body('password')
+    .trim()
+    .notEmpty()
+    .withMessage('Password is required')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long'),
+  validationError,
+  resetPassword,
 );
 
 export default router;

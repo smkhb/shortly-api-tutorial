@@ -40,12 +40,12 @@ const generateRefreshToken = (payload: TokenPayload): string => {
 };
 
 /**
- * Generate JWT reset password link with a 15-min expiration.
+ * Generate JWT reset password link with a **-min expiration.
  * - Signs the provided payload using the configured reset password secret.
  */
 const generatePasswordResetToken = (payload: ResetLinkPayload): string => {
   const token = jwt.sign(payload, config.JWT_PASSWORD_RESET_SECRET, {
-    expiresIn: '15m',
+    expiresIn: '60m',
   });
   return token;
 };
