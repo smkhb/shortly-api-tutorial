@@ -12,6 +12,7 @@ import expressRateLimit from '@/lib/expressRateLimit';
  * Controllers
  */
 import getCurrentUser from '@/controllers/user/getCurrentUser';
+import deleteCurrentUser from '@/controllers/user/deleteCurrentUser';
 
 /**
  * Middlewares
@@ -37,6 +38,16 @@ router.get(
   authentication,
   authorization(['admin', 'user']),
   getCurrentUser,
+  validationError,
+);
+
+// Delete route for current user
+router.delete(
+  '/current',
+  expressRateLimit('basic'),
+  authentication,
+  authorization(['admin', 'user']),
+  deleteCurrentUser,
   validationError,
 );
 
