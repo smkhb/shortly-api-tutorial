@@ -13,6 +13,7 @@ import expressRateLimit from '@/lib/expressRateLimit';
  * Controllers
  */
 import createShortLink from '@/controllers/link/createShortLink';
+import getMyLinks from '@/controllers/link/getMyLinks';
 
 /**
  * Middlewares
@@ -44,17 +45,38 @@ router.post(
     .withMessage('Destination is required')
     .isURL()
     .withMessage('Invalid URL'),
-  body('backHalf').optional().trim().custom(async (value) => { 
-    // Check if the backHalf already exists in the database
-    const backHalfExists = await Link.exists({ backHalf: value }).exec();
+  body('backHalf')
+    .optional()
+    .trim()
+    .custom(async (value) => {
+      // Check if the backHalf already exists in the database
+      const backHalfExists = await Link.exists({ backHalf: value }).exec();
 
-    // Handle case when given backHalf is already in use
-    if (backHalfExists) {
-      throw new Error('Back half already in use');
-    }
-  }),
+      // Handle case when given backHalf is already in use
+      if (backHalfExists) {
+        throw new Error('Back half already in use');
+      }
+    }),
   validationError,
   createShortLink,
+);
+
+// Get route to get current user all links
+router.get(
+  '/my-links',
+  expressRateLimit('basic'),
+  authentication,
+  authorization(['admin', 'user']),
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage('Limit must be an integer between 1 and 100'),
+  query('offset')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Offset must be a positive number'),
+  validationError,
+  getMyLinks,
 );
 
 export default router;
