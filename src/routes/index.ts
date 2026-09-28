@@ -6,8 +6,9 @@ import { Router } from 'express';
 /**
  * Routes
  */
-import authRoute from '@/routes/auth';
-import userRoute from '@/routes/user';
+import authRoutes from '@/routes/auth';
+import userRoutes from '@/routes/user';
+import linkRoutes from '@/routes/link';
 
 /**
  * Initial express router
@@ -26,9 +27,12 @@ router.get('/', (req, res) => {
 });
 
 // Auth routes
-router.use('/auth', authRoute);
+router.use('/auth', authRoutes);
 
 // User routes
-router.use('/users', userRoute);
+router.use('/users', userRoutes);
+
+// Link routes
+router.use('/links', linkRoutes);
 
 export default router;

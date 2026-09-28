@@ -41,8 +41,8 @@ router.get(
   expressRateLimit('basic'),
   authentication,
   authorization(['admin', 'user']),
-  getCurrentUser,
   validationError,
+  getCurrentUser,
 );
 
 // Delete route for current user
