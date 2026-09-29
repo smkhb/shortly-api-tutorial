@@ -15,6 +15,7 @@ import expressRateLimit from '@/lib/expressRateLimit';
 import createShortLink from '@/controllers/link/createShortLink';
 import getMyLinks from '@/controllers/link/getMyLinks';
 import updateLinkById from '@/controllers/link/updateLinkById';
+import deleteLinkById from '@/controllers/link/deleteLinkById';
 
 /**
  * Middlewares
@@ -103,6 +104,17 @@ router.patch(
     }),
   validationError,
   updateLinkById,
+);
+
+// Delete route to delete logged user link
+router.delete(
+  '/:linkId',
+  expressRateLimit('basic'),
+  authentication,
+  authorization(['admin', 'user']),
+  param('linkId').isMongoId().withMessage('Invalid link ID'),
+  validationError,
+  deleteLinkById,
 );
 
 export default router;
