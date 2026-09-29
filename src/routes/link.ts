@@ -14,6 +14,7 @@ import expressRateLimit from '@/lib/expressRateLimit';
  */
 import createShortLink from '@/controllers/link/createShortLink';
 import getMyLinks from '@/controllers/link/getMyLinks';
+import updateLinkById from '@/controllers/link/updateLinkById';
 
 /**
  * Middlewares
@@ -77,6 +78,31 @@ router.get(
     .withMessage('Offset must be a positive number'),
   validationError,
   getMyLinks,
+);
+
+// Patch route to update logged user link
+router.patch(
+  '/:linkId',
+  expressRateLimit('basic'),
+  authentication,
+  authorization(['admin', 'user']),
+  param('linkId').isMongoId().withMessage('Invalid link ID'),
+  body('title').optional(),
+  body('destination').optional().trim().isURL().withMessage('Invalid URL'),
+  body('backHalf')
+    .optional()
+    .trim()
+    .custom(async (value) => {
+      // Check if the backHalf already exists in the database
+      const backHalfExists = await Link.exists({ backHalf: value }).exec();
+
+      // Handle case when given backHalf is already in use
+      if (backHalfExists) {
+        throw new Error('Back half already in use');
+      }
+    }),
+  validationError,
+  updateLinkById,
 );
 
 export default router;
