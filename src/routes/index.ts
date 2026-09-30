@@ -9,6 +9,7 @@ import { Router } from 'express';
 import authRoutes from '@/routes/auth';
 import userRoutes from '@/routes/user';
 import linkRoutes from '@/routes/link';
+import redirectRoutes from '@/routes/redirect';
 
 /**
  * Initial express router
@@ -34,5 +35,8 @@ router.use('/users', userRoutes);
 
 // Link routes
 router.use('/links', linkRoutes);
+
+// Redirect routes
+router.use('/', redirectRoutes);
 
 export default router;
