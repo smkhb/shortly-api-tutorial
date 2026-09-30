@@ -11,6 +11,7 @@ import { logger } from '@/lib/winston';
  * Models
  */
 import User from '@/models/user';
+import Link from '@/models/link';
 
 /**
  * Types
@@ -21,7 +22,8 @@ const getCurrentUser = async (req: Request, res: Response): Promise<void> => {
   const userId = req.userId;
 
   try {
-    // TODO: Delete all links associated with current user
+    // Delete all links created by the user
+    await Link.deleteMany({ creator: userId }).exec();
 
     // Find user by id and delete
     await User.deleteOne({ _id: userId }).exec();
